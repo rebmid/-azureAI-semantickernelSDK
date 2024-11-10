@@ -7,9 +7,9 @@ using Microsoft.SemanticKernel.Plugins.Core;
 var builder = Kernel.CreateBuilder();
 
 builder.AddAzureOpenAIChatCompletion(
-    "gpt-35-turbo-16k-rebmid",
-    "https://openai-rebmid.openai.azure.com/",
-    "FeGq8JEJdloPwWbK23vKsWXrdzkatUfDpeQuypEo6iBoHeCJadRdJQQJ99AKACYeBjFXJ3w3AAABACOGNfvg");
+    "openAImodeldeploymentname",
+    "openAIendpoint",
+    "APIkey");
 
 builder.Plugins.AddFromType<ConversationSummaryPlugin>();
 var kernel = builder.Build();
