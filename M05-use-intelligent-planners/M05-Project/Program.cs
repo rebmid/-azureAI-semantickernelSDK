@@ -19,10 +19,20 @@ builder.AddAzureOpenAIChatCompletion(
         ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions
     };
 
-    string prompt = @"I live in Portland OR USA. Based on my recently 
-        played songs and a list of upcoming concerts, which concert 
-        do you recommend?";
+    var songSuggesterFunction = kernel.CreateFunctionFromPrompt(
+        promptTemplate: @"Based on the user's recently played music:
+            {{$recentlyPlayedSongs}}
+            recommend a song to the user from the music library:
+            {{$musicLibrary}}",
+        functionName: "SuggestSong",
+        description: "Recommend a song from the library"
+    );
 
-var result = await kernel.InvokePromptAsync(prompt, new(settings));
+    kernel.Plugins.AddFromFunctions("SuggestSong", [songSuggesterFunction]);
 
+    string prompt = @"Add this song to the recently played songs list:  title: 'Touch', artist: 'Cat's Eye', genre: 'Pop'";
+
+    var result = await kernel.InvokePromptAsync(prompt, new(settings));
+
+ 
 Console.WriteLine(result);
