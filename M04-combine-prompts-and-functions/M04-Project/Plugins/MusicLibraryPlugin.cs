@@ -1,41 +1,35 @@
+using System;
 using System.ComponentModel;
-using System.Text.Json;
-using System.Text.Json.Nodes;
+using System.IO;
 using Microsoft.SemanticKernel;
 
 public class MusicLibraryPlugin
 {
-    [KernelFunction, 
-    Description("Get a list of music recently played by the user")]
+    [KernelFunction]
+    [Description("Get a list of music recently played by the user")]
     public static string GetRecentPlays()
     {
-        string dir = Directory.GetCurrentDirectory();
-        string content = File.ReadAllText($"{dir}/data/recentlyplayed.txt");
-        return content;
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "data/recentlyplayed.txt");
+
+        if (!File.Exists(filePath))
+        {
+            return "No recently played songs found.";
+        }
+
+        return File.ReadAllText(filePath);
     }
 
-    [KernelFunction, Description("Add a song to the recently played list")]
-    public static string AddToRecentlyPlayed(
-        [Description("The name of the artist")] string artist, 
-        [Description("The title of the song")] string song, 
-        [Description("The song genre")] string genre)
+    [KernelFunction]
+    [Description("Get a list of music available to the user")]
+    public static string GetMusicLibrary()
     {
-        // Read the existing content from the file
-        string filePath = "data/recentlyplayed.txt";
-        string jsonContent = File.ReadAllText(filePath);
-        var recentlyPlayed = (JsonArray) JsonNode.Parse(jsonContent);
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "data/musiclibrary.txt");
 
-        var newSong = new JsonObject
+        if (!File.Exists(filePath))
         {
-            ["title"] = song,
-            ["artist"] = artist,
-            ["genre"] = genre
-        };
+            return "No music library found.";
+        }
 
-        recentlyPlayed.Insert(0, newSong);
-        File.WriteAllText(filePath, JsonSerializer.Serialize(recentlyPlayed,
-            new JsonSerializerOptions { WriteIndented = true }));
-
-        return $"Added '{song}' to recently played";
+        return File.ReadAllText(filePath);
     }
 }
