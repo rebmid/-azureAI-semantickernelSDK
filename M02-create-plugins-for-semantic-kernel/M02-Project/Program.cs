@@ -14,12 +14,10 @@ builder.AddAzureOpenAIChatCompletion(
 builder.Plugins.AddFromType<ConversationSummaryPlugin>();
 var kernel = builder.Build();
 
-string input = @"Please create a list of vegan breakfast recipes and gather ideas for spicy vegan dishes. 
-Also, check if there are vegan-friendly ingredients available in local stores.";
+string language = "French";
+string prompt = @$"Create a list of helpful phrases and 
+    words in ${language} a traveler would find useful.";
 
-var result = await kernel.InvokeAsync(
-    "ConversationSummaryPlugin", 
-    "GetConversationActionItems", 
-    new() {{ "input", input }});
 
+var result = await kernel.InvokePromptAsync(prompt);
 Console.WriteLine(result);
